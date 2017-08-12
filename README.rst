@@ -17,7 +17,8 @@ from https://github.com/hdima/python-syntax
 from https://github.com/kh3phr3n/python-syntax
 
 - highlight: self/cls
-- hightlight all operator
+- highlight; all operator
+- highlight: class/func def params 
 
 .. changelog
 

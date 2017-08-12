@@ -160,7 +160,10 @@ syn keyword pythonStatement     global assert
 syn keyword pythonStatement     lambda
 " syn keyword pythonStatement     with
 syn keyword pythonConditional   with
-syn keyword pythonStatement     def class nextgroup=pythonFunction,pythonMagicMethod skipwhite
+" syn keyword pythonStatement     def class nextgroup=pythonFunction,pythonMagicMethod skipwhite
+syn keyword pythonStatement     class nextgroup=pythonClass skipwhite
+syn keyword pythonStatement     def nextgroup=pythonFunction,pythonMagicMethod skipwhite
+
 syn keyword pythonRepeat        for while
 syn keyword pythonConditional   if elif else
 " The standard pyrex.vim unconditionally removes the pythonInclude group, so
@@ -183,20 +186,41 @@ syn match pythonExtraOperator       "\%([~!^&|*/%+-]\|\%(class\s*\)\@<!<<\|<=>\|
 syn match pythonExtraPseudoOperator "\%(-=\|/=\|\*\*=\|\*=\|&&=\|&=\|&&\|||=\||=\|||\|%=\|+=\|!\~\|!=\)"
 syn match pythonComma ","
 " =========================================
+" Bracket symbols
+syn match pythonBrackets "[(|)]" contained skipwhite
+" Class parameters
+syn match  pythonClass "\%(\%(def\s\|class\s\|@\)\s*\)\@<=\h\%(\w\|\.\)*" contained nextgroup=pythonClassVars
+syn region pythonClassVars start="(" end=")" contained contains=pythonClassParameters transparent keepend
+syn match  pythonClassParameters "[^,]*" contained contains=pythonExtraOperator,pythonBoolean,pythonNone,pythonBuiltinObj,pythonComma,pythonBuiltinFunc,pythonConstant,pythonStatement,pythonNumber,pythonString,pythonBrackets skipwhite
+
+" Function parameters
+" syn match  pythonFunction "\%(\%(def\s\|class\s\|@\)\s*\)\@<=\h\%(\w\|\.\)*" contained nextgroup=pythonFunctionVars
+syn region pythonFunctionVars start="(" end=")" contained contains=pythonFunctionParameters transparent keepend
+syn match  pythonFunctionParameters "[^,]*" contained contains=pythonSelf,pythonExtraOperator,pythonBoolean,pythonNone,pythonComma,pythonBuiltinObj,pythonBuiltinFunc,pythonConstant,pythonStatement,pythonNumber,pythonString,pythonBrackets skipwhite
+
+" Function call
+" syn region FCall start='[[:alpha:]_]\i*\s*(' end=')' contains=FCall,FCallKeyword
+" syn region FCall start='[[:alpha:]_]\i*\s*(' end=')' contains=FCall,FCallKeyword,pythonExtraOperator,pythonBoolean,pythonNone,pythonComma,pythonBuiltinObj,pythonBuiltinFunc,pythonStatement,pythonNumber,pythonString
+" syn region FCall start='[[:alpha:]_]\i*\s*(' end=')' contains=FCall,FCallKeyword,pythonExtraOperator,pythonBoolean,pythonNone,pythonComma,pythonBuiltinObj,pythonBuiltinFunc,pythonStatement,pythonNumber,pythonString
+" syn match FCallKeyword /\i*\ze\s*=[^=]/ contained
+" =========================================
+
 
 if s:Python2Syntax()
   if !s:Enabled("g:python_print_as_function")
     syn keyword pythonStatement  print
   endif
   syn keyword pythonImport      as
-  syn match   pythonFunction    "[a-zA-Z_][a-zA-Z0-9_]*" display contained
+  " syn match   pythonFunction    "[a-zA-Z_][a-zA-Z0-9_]*" display contained
+  syn match  pythonFunction "[a-zA-Z_][a-zA-Z0-9_]*" contained nextgroup=pythonFunctionVars
 else
   syn keyword pythonNone None
   " syn keyword pythonStatement   as nonlocal None
   syn keyword pythonStatement   as nonlocal
   syn match   pythonStatement   "\<yield\s\+from\>" display
   syn keyword pythonBoolean     True False
-  syn match   pythonFunction    "\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*" display contained
+  " syn match   pythonFunction    "\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*" display contained
+  syn match  pythonFunction "\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*" contained nextgroup=pythonFunctionVars
   syn keyword pythonStatement   await
   syn match   pythonStatement   "\<async\s\+def\>" nextgroup=pythonFunction skipwhite
   syn match   pythonStatement   "\<async\s\+with\>" display
@@ -597,8 +621,9 @@ if version >= 508 || !exists("did_python_syn_inits")
   HiLink pythonExtraOperator       Operator
   HiLink pythonExtraPseudoOperator Operator
   HiLink pythonComma Identifier
-  HiLink pythonNone Identifier
+  HiLink pythonNone Keyword
   HiLink pythonMagicMethod      Identifier
+
 
   if !s:Enabled("g:python_highlight_pycharm_monokai")
     HiLink pythonStatement        Statement
@@ -612,6 +637,11 @@ if version >= 508 || !exists("did_python_syn_inits")
     HiLink pythonSelf Boolean
   endif
 
+    HiLink pythonClass Type
+    HiLink pythonBrackets           Normal
+    HiLink pythonClassParameters    Identifier
+    HiLink pythonFunctionParameters Identifier
+    " HiLink FCallKeyword Identifier
   delcommand HiLink
 endif
 
