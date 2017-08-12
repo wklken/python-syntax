@@ -82,6 +82,7 @@
 "    python_highlight_file_headers_as_comments
 "                                           Highlight shebang and coding
 "                                           headers as comments
+"   python_highlight_magic_methods          Highlight magic methods
 "
 "    python_highlight_all                   Enable all the options above
 "                                           NOTE: This option don't override
@@ -144,6 +145,8 @@ if s:Enabled("g:python_highlight_all")
   call s:EnableByDefault("g:python_highlight_space_errors")
   call s:EnableByDefault("g:python_highlight_doctests")
   call s:EnableByDefault("g:python_print_as_function")
+  call s:EnableByDefault("g:python_highlight_magic_methods")
+  " call s:EnableByDefault("g:python_highlight_pycharm_monokai")
 endif
 
 "
@@ -155,8 +158,9 @@ syn keyword pythonStatement     exec return
 syn keyword pythonStatement     pass raise
 syn keyword pythonStatement     global assert
 syn keyword pythonStatement     lambda
-syn keyword pythonStatement     with
-syn keyword pythonStatement     def class nextgroup=pythonFunction skipwhite
+" syn keyword pythonStatement     with
+syn keyword pythonConditional   with
+syn keyword pythonStatement     def class nextgroup=pythonFunction,pythonMagicMethod skipwhite
 syn keyword pythonRepeat        for while
 syn keyword pythonConditional   if elif else
 " The standard pyrex.vim unconditionally removes the pythonInclude group, so
@@ -175,8 +179,9 @@ syn match pythonImport      "\<from\>" display
 syn keyword pythonSelf self cls
 " operators
 " pythonExtra(*)Operator
-syn match pythonExtraOperator       "\%([~!^&|*/%+-]\|\%(class\s*\)\@<!<<\|<=>\|<=\|\%(<\|\<class\s\+\u\w*\s*\)\@<!<[^<]\@=\|===\|==\|=\~\|>>\|>=\|=\@<!>\|\*\*\|\.\.\.\|\.\.\|::\|=\|:\|,\)"
+syn match pythonExtraOperator       "\%([~!^&|*/%+-]\|\%(class\s*\)\@<!<<\|<=>\|<=\|\%(<\|\<class\s\+\u\w*\s*\)\@<!<[^<]\@=\|===\|==\|=\~\|>>\|>=\|=\@<!>\|\*\*\|\.\.\.\|\.\.\|::\|=\|:\)"
 syn match pythonExtraPseudoOperator "\%(-=\|/=\|\*\*=\|\*=\|&&=\|&=\|&&\|||=\||=\|||\|%=\|+=\|!\~\|!=\)"
+syn match pythonComma ","
 " =========================================
 
 if s:Python2Syntax()
@@ -186,7 +191,9 @@ if s:Python2Syntax()
   syn keyword pythonImport      as
   syn match   pythonFunction    "[a-zA-Z_][a-zA-Z0-9_]*" display contained
 else
-  syn keyword pythonStatement   as nonlocal None
+  syn keyword pythonNone None
+  " syn keyword pythonStatement   as nonlocal None
+  syn keyword pythonStatement   as nonlocal
   syn match   pythonStatement   "\<yield\s\+from\>" display
   syn keyword pythonBoolean     True False
   syn match   pythonFunction    "\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*" display contained
@@ -409,7 +416,7 @@ syn match   pythonFloat		"\<\d\+\.\d*\%([eE][+-]\=\d\+\)\=[jJ]\=" display
 
 if s:Enabled("g:python_highlight_builtin_objs")
   if s:Python2Syntax()
-    syn keyword pythonBuiltinObj	None
+    " syn keyword pythonBuiltinObj	None
     syn keyword pythonBoolean		True False
   endif
   syn keyword pythonBuiltinObj	Ellipsis NotImplemented
@@ -487,6 +494,22 @@ if s:Enabled("g:python_highlight_exceptions")
   syn keyword pythonExClass	ImportWarning UnicodeWarning
 endif
 
+
+if s:Enabled("g:python_highlight_magic_methods")
+syn keyword pythonMagicMethod contained
+            \ __new__ __init__ __del__
+            \ __str__ __repr__ __unicode__ __hash__
+            \ __len__ __nonzero__
+            \ __getitem__ __setitem__ __delitem__
+            \ __cmp__ __rcmp__
+            \ __lt__ __le__ __eq__ __ne__ __gt__ __ge__
+            \ __add__ __iadd__ __sub__ __isub__
+            \ __contains__ __iter__
+            \ __call__
+            \ __getattr__ __setattr__ __delattr__ __getattribute__
+            \ __get__ __set__ __delete__
+endif
+
 if s:Enabled("g:python_slow_sync")
   syn sync minlines=2000
 else
@@ -505,15 +528,13 @@ if version >= 508 || !exists("did_python_syn_inits")
     command -nargs=+ HiLink hi def link <args>
   endif
 
-  HiLink pythonStatement        Statement
-  HiLink pythonImport           Include
   HiLink pythonFunction         Function
   HiLink pythonConditional      Conditional
   HiLink pythonRepeat           Repeat
   HiLink pythonException        Exception
+
   HiLink pythonOperator         Operator
 
-  HiLink pythonDecorator        Define
   HiLink pythonDottedName       Function
   HiLink pythonDot              Normal
 
@@ -572,11 +593,25 @@ if version >= 508 || !exists("did_python_syn_inits")
 
   HiLink pythonExClass          Structure
 
-  " HiLink pythonSelf Identifier
-  HiLink pythonSelf Boolean
   " operator
   HiLink pythonExtraOperator       Operator
   HiLink pythonExtraPseudoOperator Operator
+  HiLink pythonComma Identifier
+  HiLink pythonNone Identifier
+  HiLink pythonMagicMethod      Identifier
+
+  if !s:Enabled("g:python_highlight_pycharm_monokai")
+    HiLink pythonStatement        Statement
+    HiLink pythonImport           Include
+    HiLink pythonDecorator        Define
+    HiLink pythonSelf Identifier
+  else
+    HiLink pythonStatement        Define
+    HiLink pythonImport           Define
+    HiLink pythonDecorator        Keyword
+    HiLink pythonSelf Boolean
+  endif
+
   delcommand HiLink
 endif
 

@@ -1,6 +1,34 @@
 Python syntax highlighting script for Vim
 =========================================
 
+update:
+
+```
+" in your .vimrc
+let g:python_highlight_pycharm_monokai=1
+```
+
+.. reference
+
+from https://github.com/hdima/python-syntax
+
+- origin
+
+from https://github.com/kh3phr3n/python-syntax
+
+- highlight: self/cls
+- hightlight all operator
+
+.. changelog
+
+- highlight: ':'
+- highlight: ','
+- highlight: None
+- highlight: @
+
+
+----
+
 .. contents::
 
 About
