@@ -169,6 +169,16 @@ syn keyword pythonOperator      and in is not or
 syn match pythonStatement   "\<yield\>" display
 syn match pythonImport      "\<from\>" display
 
+" =========================================
+" reference https://github.com/kh3phr3n/python-syntax
+" self, cls
+syn keyword pythonSelf self cls
+" operators
+" pythonExtra(*)Operator
+syn match pythonExtraOperator       "\%([~!^&|*/%+-]\|\%(class\s*\)\@<!<<\|<=>\|<=\|\%(<\|\<class\s\+\u\w*\s*\)\@<!<[^<]\@=\|===\|==\|=\~\|>>\|>=\|=\@<!>\|\*\*\|\.\.\.\|\.\.\|::\|=\|:\|,\)"
+syn match pythonExtraPseudoOperator "\%(-=\|/=\|\*\*=\|\*=\|&&=\|&=\|&&\|||=\||=\|||\|%=\|+=\|!\~\|!=\)"
+" =========================================
+
 if s:Python2Syntax()
   if !s:Enabled("g:python_print_as_function")
     syn keyword pythonStatement  print
@@ -562,6 +572,11 @@ if version >= 508 || !exists("did_python_syn_inits")
 
   HiLink pythonExClass          Structure
 
+  " HiLink pythonSelf Identifier
+  HiLink pythonSelf Boolean
+  " operator
+  HiLink pythonExtraOperator       Operator
+  HiLink pythonExtraPseudoOperator Operator
   delcommand HiLink
 endif
 
