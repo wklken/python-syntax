@@ -553,11 +553,8 @@ if version >= 508 || !exists("did_python_syn_inits")
   endif
 
   HiLink pythonFunction         Function
-  HiLink pythonConditional      Conditional
-  HiLink pythonRepeat           Repeat
   HiLink pythonException        Exception
 
-  HiLink pythonOperator         Operator
 
   HiLink pythonDottedName       Function
   HiLink pythonDot              Normal
@@ -627,10 +624,19 @@ if version >= 508 || !exists("did_python_syn_inits")
 
   if !s:Enabled("g:python_highlight_pycharm_monokai")
     HiLink pythonStatement        Statement
+    HiLink pythonConditional      Conditional
+    HiLink pythonRepeat           Repeat
+    HiLink pythonOperator         Operator
     HiLink pythonImport           Include
     HiLink pythonDecorator        Define
     HiLink pythonSelf Identifier
   else
+
+    " plan 1
+    HiLink pythonConditional      Define
+    HiLink pythonRepeat           Define
+    HiLink pythonOperator         Define
+
     HiLink pythonStatement        Define
     HiLink pythonImport           Define
     HiLink pythonDecorator        Keyword
