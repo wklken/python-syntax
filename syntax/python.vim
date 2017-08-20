@@ -610,7 +610,6 @@ if version >= 508 || !exists("did_python_syn_inits")
   HiLink pythonBoolean          Boolean
 
   HiLink pythonBuiltinObj       Structure
-  HiLink pythonBuiltinFunc      Function
 
   HiLink pythonExClass          Structure
 
@@ -630,6 +629,7 @@ if version >= 508 || !exists("did_python_syn_inits")
     HiLink pythonImport           Include
     HiLink pythonDecorator        Define
     HiLink pythonSelf Identifier
+    HiLink pythonBuiltinFunc      Function
   else
 
     " plan 1
@@ -641,6 +641,7 @@ if version >= 508 || !exists("did_python_syn_inits")
     HiLink pythonImport           Define
     HiLink pythonDecorator        Keyword
     HiLink pythonSelf Boolean
+    HiLink pythonBuiltinFunc      Define
   endif
 
     HiLink pythonClass Type
